@@ -95,13 +95,20 @@ void IncreaseProgramCounter() {
 
 void Run() {
     while (!state.is_halt) {
+        printState();
+
         int machine_code = GetMachineCode(state.program_counter);
         IncreaseProgramCounter();
 
         Opcode opcode = GetOpcode(machine_code);
+        int rs = GetRS(machine_code);
+        int rt = GetRT(machine_code);
+        int rd = GetRD(machine_code);
+        int offset = GetOffset(machine_code);
         switch (opcode) {
             case add:
                 cout << "add" << endl;
+                state.registers[rd] = state.registers[rs] + state.registers[rt];
                 break;
             case nand:
                 cout << "nand" << endl;
@@ -153,6 +160,7 @@ int main(int argc, char **argv) {
         StoreProgramToState(machine_codes);
         
         Run();
+        printState();
     } catch(char const* error) {
         cout << "error: " << error << endl;
         return 1;
