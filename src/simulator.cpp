@@ -124,6 +124,8 @@ void Run() {
                 break; 
             case jalr:
                 cout << "jalr" << endl;
+                state.registers[rt] = state.program_counter;
+                state.program_counter = state.registers[rs];
                 break; 
             case halt:
                 cout << "halt" << endl;
