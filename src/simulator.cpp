@@ -61,16 +61,26 @@ Opcode GetOpcode(int machine_code) {
     return Opcode(machine_code >> 22);
 }
 
+int ValidRegisterNumber(int number) {
+    if (number > 7 or number < 0) {
+        char error[SIZE_OF_CHAR_BUFFER];
+        sprintf(error, "Unknow invalid register %d", number);
+        throw error;
+    }
+
+    return number;
+}
+
 int GetRS(int machine_code) {
-    return (machine_code >> 19) & 7;
+    return ValidRegisterNumber((machine_code >> 19) & 7);
 }
 
 int GetRT(int machine_code) {
-    return (machine_code >> 16) & 7;
+    return ValidRegisterNumber((machine_code >> 16) & 7);
 }
 
 int GetRD(int machine_code) {
-    return machine_code & 7;
+    return ValidRegisterNumber(machine_code & 7);
 }
 
 int GetOffset(int machine_code) {
@@ -104,6 +114,9 @@ void Run() {
         int rs = GetRS(machine_code);
         int rt = GetRT(machine_code);
         int rd = GetRD(machine_code);
+        if (rd == 0) {
+            throw "Can not write to register 0";
+        }
         int offset = GetOffset(machine_code);
         switch (opcode) {
             case add:
