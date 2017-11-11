@@ -112,6 +112,7 @@ void Run() {
                 break;
             case nand:
                 cout << "nand" << endl;
+                state.registers[rd] = ~(state.registers[rs] & state.registers[rt]);
                 break; 
             case lw:
                 cout << "lw" << endl;
