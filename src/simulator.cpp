@@ -84,7 +84,11 @@ int GetRD(int machine_code) {
 }
 
 int GetOffset(int machine_code) {
-    return (machine_code << 16) >> 16;
+    int offset = machine_code & 0xffff;
+    if (offset & (1 << 15)) {
+        offset -= (1 << 16); 
+    }
+    return offset;
 }
 
 int GetMachineCode(int program_counter) {
@@ -103,14 +107,20 @@ void IncreaseProgramCounter() {
     state.program_counter++;
 }
 
+void CheckRD(int rd) {
+    if (rd == 0) {
+        throw "Can not write to register 0";
+    }
+}
+
 void Run() {
     while (!state.is_halt) {
         printState();
 
-        if ((state.program_counter = 0) && 
-            (state.program_counter >= state.number_of_instructions)) {
-                throw "State is invalid";
-            }
+        if ((state.program_counter < 0) or (state.program_counter >= state.number_of_instructions)) {
+            throw "Invalid program counter";
+        }
+
         int machine_code = GetMachineCode(state.program_counter);
         IncreaseProgramCounter();
 
@@ -118,26 +128,22 @@ void Run() {
         int rs = GetRS(machine_code);
         int rt = GetRT(machine_code);
         int rd = GetRD(machine_code);
-        if (rd == 0) {
-            throw "Can not write to register 0";
-        }
         int offset = GetOffset(machine_code);
         switch (opcode) {
             case add:
-                cout << "add" << endl;
+                CheckRD(rd);
                 state.registers[rd] = state.registers[rs] + state.registers[rt];
                 break;
             case nand:
-                cout << "nand" << endl;
+                CheckRD(rd);
                 state.registers[rd] = ~(state.registers[rs] & state.registers[rt]);
                 break; 
             case lw:
-                cout << "lw" << endl;
+                CheckRD(rt);
                 state.registers[rt] = state.memories[state.registers[rs] + offset];
                 break; 
             case sw:
-                cout << "sw" << endl;
-                state.memories[state.memories[state.registers[rs]] + offset] = state.registers[rt];
+                state.memories[state.registers[rs] + offset] = state.registers[rt];
                 break; 
             case beq:
                 cout << "beq" << endl;
@@ -146,7 +152,7 @@ void Run() {
                 }
                 break; 
             case jalr:
-                cout << "jalr" << endl;
+                CheckRD(rt);
                 state.registers[rt] = state.program_counter;
                 state.program_counter = state.registers[rs];
                 break; 
