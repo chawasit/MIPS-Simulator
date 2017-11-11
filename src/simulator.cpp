@@ -107,6 +107,10 @@ void Run() {
     while (!state.is_halt) {
         printState();
 
+        if ((state.program_counter = 0) && 
+            (state.program_counter >= state.number_of_instructions)) {
+                throw "State is invalid";
+            }
         int machine_code = GetMachineCode(state.program_counter);
         IncreaseProgramCounter();
 
@@ -177,7 +181,8 @@ int main(int argc, char **argv) {
 
     try {
         vector<string> lines = file_to_lines(inputFile);
-        vector<int> machine_codes = parse(lines);   
+        vector<int> machine_codes = parse(lines); 
+        state.registers[5] = SIZE_OF_MEMORY - 1;  
         StoreProgramToState(machine_codes);
         
         Run();
