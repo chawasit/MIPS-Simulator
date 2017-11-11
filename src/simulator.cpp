@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <cstdio>
 
 #define SIZE_OF_MEMORY 65536
 #define SIZE_OF_REGISTER 8 
@@ -53,6 +54,26 @@ vector<int> parse(vector<string> lines) {
     return machineCodes;
 }
 
+int GetOpcode(int machine_code) {
+    return machine_code >> 22;
+}
+
+int GetRS(int machine_code) {
+    return (machine_code >> 19) & 7;
+}
+
+int GetRT(int machine_code) {
+    return (machine_code >> 16) & 7;
+}
+
+int GetRD(int machine_code) {
+    return machine_code & 7;
+}
+
+int GetOffset(int machine_code) {
+    return machine_code & 0xffff;
+}
+
 int main(int argc, char **argv) {
 
     if (argc == 1) {
@@ -72,8 +93,16 @@ int main(int argc, char **argv) {
         vector<int> machineCodes = parse(lines);
 
         // Main code
-        for(auto code: machineCodes)
-            cout << code << endl;
+        for (auto code: machineCodes) {
+            printf("code:%d op:%d rs:%d rt:%d rd:%d offset:%d\n",
+                    code,
+                    GetOpcode(code),
+                    GetRS(code),
+                    GetRT(code),
+                    GetRD(code),
+                    GetOffset(code)
+                );
+        }
 
     } catch(char const* error) {
         cout << "error: " << error << endl;
