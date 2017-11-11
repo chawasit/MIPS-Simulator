@@ -146,7 +146,6 @@ void Run() {
                 state.memories[state.registers[rs] + offset] = state.registers[rt];
                 break; 
             case beq:
-                cout << "beq" << endl;
                 if (state.registers[rs] == state.registers[rt]) {
                     state.program_counter = state.program_counter + offset;
                 }
@@ -157,11 +156,9 @@ void Run() {
                 state.program_counter = state.registers[rs];
                 break; 
             case halt:
-                cout << "halt" << endl;
                 state.is_halt = true;
                 break; 
             case noop:
-                cout << "noop" << endl;
                 break; 
             default:
                 char error[SIZE_OF_CHAR_BUFFER];
@@ -169,6 +166,10 @@ void Run() {
                 throw error;
         }
     }
+}
+
+void PrintInstructions() {
+
 }
 
 int main(int argc, char **argv) {
