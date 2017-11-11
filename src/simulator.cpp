@@ -74,7 +74,7 @@ int GetRD(int machine_code) {
 }
 
 int GetOffset(int machine_code) {
-    return machine_code & 0xffff;
+    return (machine_code << 16) >> 16;
 }
 
 int GetMachineCode(int program_counter) {
