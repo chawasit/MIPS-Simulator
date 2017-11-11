@@ -133,6 +133,7 @@ void Run() {
                 break; 
             case sw:
                 cout << "sw" << endl;
+                state.memories[state.memories[state.registers[rs]] + offset] = state.registers[rt];
                 break; 
             case beq:
                 cout << "beq" << endl;
