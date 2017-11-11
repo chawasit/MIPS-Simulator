@@ -5,7 +5,9 @@
 #include <cstdio>
 
 #define SIZE_OF_MEMORY 65536
-#define SIZE_OF_REGISTER 8 
+#define SIZE_OF_REGISTER 8
+#define SIZE_OF_CHAR_BUFFER 100
+enum Opcode {add, nand, lw, sw, beq, jalr, halt, noop};
 
 using namespace std;
 
@@ -14,11 +16,12 @@ struct State {
     int memories[SIZE_OF_MEMORY];
     int registers[SIZE_OF_REGISTER];
     int number_of_instructions;
+    bool is_halt;
 } state;
 
-void printState(State &state) {
+void printState() {
     cout << "\n@@@\nstate:\n";
-    cout << "\tpc "<<state.program_counter<<endl;
+    cout << "\tpc " << state.program_counter << endl;
     cout << "\tmemory:\n";
 
     for (int i = 0; i < state.number_of_instructions; i++)
@@ -54,8 +57,8 @@ vector<int> parse(vector<string> lines) {
     return machineCodes;
 }
 
-int GetOpcode(int machine_code) {
-    return machine_code >> 22;
+Opcode GetOpcode(int machine_code) {
+    return Opcode(machine_code >> 22);
 }
 
 int GetRS(int machine_code) {
@@ -74,6 +77,62 @@ int GetOffset(int machine_code) {
     return machine_code & 0xffff;
 }
 
+int GetMachineCode(int program_counter) {
+    return state.memories[program_counter];
+}
+
+void StoreProgramToState(vector<int> machine_codes) {
+    state.number_of_instructions = machine_codes.size();
+
+    for (int i = 0; i < machine_codes.size(); i++) {
+        state.memories[i] = machine_codes[i];
+    }
+}
+
+void IncreaseProgramCounter() {
+    state.program_counter++;
+}
+
+void Run() {
+    while (!state.is_halt) {
+        int machine_code = GetMachineCode(state.program_counter);
+        IncreaseProgramCounter();
+
+        Opcode opcode = GetOpcode(machine_code);
+        switch (opcode) {
+            case add:
+                cout << "add" << endl;
+                break;
+            case nand:
+                cout << "nand" << endl;
+                break; 
+            case lw:
+                cout << "lw" << endl;
+                break; 
+            case sw:
+                cout << "sw" << endl;
+                break; 
+            case beq:
+                cout << "beq" << endl;
+                break; 
+            case jalr:
+                cout << "jalr" << endl;
+                break; 
+            case halt:
+                cout << "halt" << endl;
+                state.is_halt = true;
+                break; 
+            case noop:
+                cout << "noop" << endl;
+                break; 
+            default:
+                char error[SIZE_OF_CHAR_BUFFER];
+                sprintf(error, "Unknow opcode %d", opcode);
+                throw error;
+        }
+    }
+}
+
 int main(int argc, char **argv) {
 
     if (argc == 1) {
@@ -90,20 +149,10 @@ int main(int argc, char **argv) {
 
     try {
         vector<string> lines = file_to_lines(inputFile);
-        vector<int> machineCodes = parse(lines);
-
-        // Main code
-        for (auto code: machineCodes) {
-            printf("code:%d op:%d rs:%d rt:%d rd:%d offset:%d\n",
-                    code,
-                    GetOpcode(code),
-                    GetRS(code),
-                    GetRT(code),
-                    GetRD(code),
-                    GetOffset(code)
-                );
-        }
-
+        vector<int> machine_codes = parse(lines);   
+        StoreProgramToState(machine_codes);
+        
+        Run();
     } catch(char const* error) {
         cout << "error: " << error << endl;
         return 1;
