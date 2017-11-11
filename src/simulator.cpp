@@ -135,6 +135,9 @@ void Run() {
                 break; 
             case beq:
                 cout << "beq" << endl;
+                if (state.registers[rs] == state.registers[rt]) {
+                    state.program_counter = state.program_counter + offset;
+                }
                 break; 
             case jalr:
                 cout << "jalr" << endl;
