@@ -9,7 +9,7 @@ INC_DIRS := $(shell find $(SRC_DIRS) -type d)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 CPP=g++
-CPPFLAGS ?= $(INC_FLAGS) -MMD -MP -std=c++11 -Wc++11-extensions -Wall
+CPPFLAGS ?= $(INC_FLAGS) -MMD -MP -std=c++11 -Wall
 
 $(TARGET): $(OBJS)
 	$(CPP) $(LDFLAGS) $(OBJS) -o $@ $(LOADLIBES) $(LDLIBS)
