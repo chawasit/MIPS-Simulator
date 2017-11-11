@@ -129,7 +129,7 @@ void Run() {
                 break; 
             case lw:
                 cout << "lw" << endl;
-                state.registers[rt] = state.memories[state.registers[rs]] + offset;
+                state.registers[rt] = state.memories[state.registers[rs] + offset];
                 break; 
             case sw:
                 cout << "sw" << endl;
