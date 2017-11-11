@@ -2,7 +2,6 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include <tuple>
 
 using namespace std;
 
@@ -12,32 +11,23 @@ vector<string> file_to_lines(ifstream &file) {
     while (getline(file, line)) {
         lines.push_back(line);
     }
-    return lines;
-}
 
-vector<string> parse_argument(string line) {
-    istringstream iss(line);
-    vector<string> arguments;
-    string argument;
-    while(iss >> argument) {
-        arguments.push_back(argument);
-    }
-    cout << endl;
-    return arguments;
+    return lines;
 }
 
 vector<int> parse(vector<string> lines) {
     vector<int> machineCodes;
     for (string line: lines) {
-        parse_argument(line);
+        machineCodes.push_back(stoi(line));
     }
+
     return machineCodes;
 }
 
 int main(int argc, char **argv) {
 
     if (argc == 1) {
-        cout << "usage: " << argv[0] << " [in] [out]" << endl;
+        cout << "usage: " << argv[0] << " [input file]" << endl;
         return 0;
     }
 
@@ -51,18 +41,14 @@ int main(int argc, char **argv) {
     try {
         vector<string> lines = file_to_lines(inputFile);
         vector<int> machineCodes = parse(lines);
+
+        // Main code
+        for(auto code: machineCodes)
+            cout << code << endl;
+
     } catch(char const* error) {
         cout << "error: " << error << endl;
         return 1;
-    }
-
-    if (argc == 3) {
-        ofstream outputFile;
-        outputFile.open(argv[2]);
-        if (!outputFile.is_open()) {
-            cout << "Can't open " << argv[2] << endl;
-            return 69;
-        }
     }
 
     return 0;
