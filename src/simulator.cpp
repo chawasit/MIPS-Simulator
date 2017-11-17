@@ -181,8 +181,7 @@ int main(int argc, char **argv) {
 
     try {
         vector<string> lines = file_to_lines(inputFile);
-        vector<int> machine_codes = parse(lines); 
-        state.registers[5] = SIZE_OF_MEMORY - 1;  
+        vector<int> machine_codes = parse(lines);   
         StoreProgramToState(machine_codes);
         
         Run();
