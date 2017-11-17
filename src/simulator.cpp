@@ -183,7 +183,7 @@ int main(int argc, char **argv) {
     inputFile.open(argv[1]);
     if (!inputFile.is_open()) {
         cout << "Can't open " << argv[1] << endl;
-        return 69;
+        return 1;
     }
 
     try {
