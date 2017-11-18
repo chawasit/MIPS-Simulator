@@ -20,6 +20,8 @@ struct State {
     bool is_halt; // add halt state
 } state;
 
+int excuted_instructions;
+
 // copy again
 void printState() {
     cout << "\n@@@\nstate:\n";
@@ -184,6 +186,7 @@ void Run() {
                 sprintf(error, "Unknow opcode %d", opcode);
                 throw error;
         }
+        excuted_instructions++;
     }
 }
 
@@ -216,6 +219,8 @@ int main(int argc, char **argv) {
 
         // print latest state after program completed
         printState();
+
+        printf("\nHalted! Total excuted instructions: %d\n", excuted_instructions);
     } catch(char const* error) {
         cout << "error: " << error << endl;
         return 1;
